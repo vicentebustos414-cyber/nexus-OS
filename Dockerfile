@@ -36,7 +36,7 @@ RUN echo -e "keyserver-options auto-key-retrieve" >> /etc/pacman.d/gnupg/gpg.con
   su - build -c "cd /tmp/oras && makepkg -f" && \
   pacman --noconfirm -U /tmp/oras/oras-*.pkg.tar.zst \
   && \
-  pacman -R go
+  pacman --noconfirm -Rdd go || true
 
 # Auto add PGP keys for users
 RUN mkdir -p /etc/gnupg/ && echo -e "keyserver-options auto-key-retrieve" >> /etc/gnupg/gpg.conf
