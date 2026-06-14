@@ -1,17 +1,19 @@
 #! /bin/bash
 
-export VERSION="50"
-export SYSTEM_DESC="ChimeraOS"
-export SYSTEM_NAME="chimeraos"
+export VERSION="1.0-cachyos"
+export SYSTEM_DESC="NexusOS Pro (CachyOS Optimized)"
+export SYSTEM_NAME="nexusos-pro"
 export USERNAME="gamer"
-export SIZE="12000MB"
+export SIZE="13500MB"
 export ARCHIVE_DATE=$(date -d 'yesterday' +%Y/%m/%d)
-export WEBSITE="https://chimeraos.org"
-export DOCUMENTATION_URL="https://chimeraos.org/about"
-export BUG_REPORT_URL="https://github.com/ChimeraOS/chimeraos/issues"
+export WEBSITE="https://nexusos.local"
+export DOCUMENTATION_URL="https://nexusos.local/docs"
+export BUG_REPORT_URL="https://nexusos.local/issues"
 
-export KERNEL_PACKAGE="linux"
-export KERNEL_PACKAGE_ORIGIN="ghcr.io/opengamingcollective/kernel-packages-arch:latest"
+# CachyOS Kernel - Optimizado para gaming
+export KERNEL_PACKAGE="linux-cachyos"
+export KERNEL_PACKAGE_ORIGIN="https://mirror.cachyos.org/cachyos/x86_64/"
+export KERNEL_CONFIG="cachyos-bore"  # BORE scheduler
 
 export PACKAGES="\
 	accountsservice \
@@ -23,6 +25,7 @@ export PACKAGES="\
 	amd-ucode \
 	bash-completion \
 	broadcom-wl-dkms \
+	btrfs-progs \
 	bzip2 \
 	cifs-utils \
 	cpupower \
@@ -64,6 +67,21 @@ export PACKAGES="\
 	gvfs-nfs \
 	gzip \
 	htop \
+	gamemode \
+	lib32-gamemode \
+	cachyos-kernels \
+	cachyos-bore-sched \
+	wine \
+	wine-staging \
+	lib32-wine \
+	lib32-wine-staging \
+	winetricks \
+	dxvk \
+	lib32-dxvk \
+	vkd3d \
+	lib32-vkd3d \
+	vulkan-icd-loader \
+	lib32-vulkan-icd-loader \
 	intel-gpu-tools \
 	inputplumber \
 	intel-media-driver \
@@ -102,6 +120,8 @@ export PACKAGES="\
 	libretro-ppsspp \
 	libretro-shaders-slang \
 	libretro-snes9x \
+	scummvm \
+	mednafen \
 	libxcrypt-compat \
 	libxss \
 	lightdm \
@@ -142,12 +162,14 @@ export PACKAGES="\
 	qtractor \
 	retroarch \
 	rsync \
+	snapper \
 	smbclient \
 	sof-firmware \
 	sshfs \
 	steam \
 	sudo \
 	tar \
+	timeshift \
 	tree \
 	ttf-liberation \
 	unace \
@@ -201,6 +223,10 @@ export AUR_PACKAGES="\
 	libretro-prosystem-git \
 	libretro-stella2014-git \
 	libretro-virtualjaguar-git \
+	citra-canary \
+	ryujinx \
+	pcsx2 \
+	emulationstation-de \
 	linux-firmware-valve \
 	kanit-font \
 	nintendo-udev \
@@ -220,6 +246,9 @@ export AUR_PACKAGES="\
 	wyvern \
 	xpadneo-dkms-git \
 	zenergy-dkms-git \
+	proton-ge-custom-bin \
+	bottles \
+	lutris \
 "
 
 export SERVICES="\
@@ -268,6 +297,9 @@ postinstallhook() {
 	echo "${USERNAME} ALL=(ALL) NOPASSWD: /usr/bin/chimera-session-use-gamescope
 	${USERNAME} ALL=(ALL) NOPASSWD: /usr/bin/chimera-session-use-lightdm
 	${USERNAME} ALL=(ALL) NOPASSWD: /usr/share/chimera/bin/power-tool
+	${USERNAME} ALL=(ALL) NOPASSWD: /usr/bin/snapper
+	${USERNAME} ALL=(ALL) NOPASSWD: /usr/bin/timeshift
+	${USERNAME} ALL=(ALL) NOPASSWD: /usr/sbin/timeshift-launcher
 	" >/etc/sudoers.d/chimera
 
 	# download and add racing wheel udev rules
@@ -276,6 +308,86 @@ postinstallhook() {
 	curl -L -O https://raw.githubusercontent.com/berarma/oversteer/master/data/udev/99-logitech-wheel-perms.rules
 	curl -L -O https://raw.githubusercontent.com/berarma/oversteer/master/data/udev/99-thrustmaster-wheel-perms.rules
 	popd
+
+	# ========== NexusOS System Recovery Setup ==========
+	# Configure Snapper for system snapshots
+	umount /.snapshots 2>/dev/null || true
+	rm -rf /.snapshots 2>/dev/null || true
+	rm -f /etc/snapper/configs/root 2>/dev/null || true
+
+	snapper -c root create-config / 2>/dev/null || true
+
+	# Create Snapper configuration
+	cat > /etc/snapper/configs/root << 'SNAPPER_EOF'
+SUBVOLUME="/"
+FSTYPE="btrfs"
+ALLOW_USERS=""
+ALLOW_GROUPS=""
+TIMELINE_CREATE="yes"
+TIMELINE_CLEANUP="yes"
+TIMELINE_LIMIT_HOURLY="0"
+TIMELINE_LIMIT_DAILY="7"
+TIMELINE_LIMIT_WEEKLY="0"
+TIMELINE_LIMIT_MONTHLY="0"
+TIMELINE_LIMIT_YEARLY="0"
+NUMBER_CLEANUP="yes"
+NUMBER_MIN_AGE="1800"
+NUMBER_LIMIT="10"
+NUMBER_LIMIT_IMPORTANT="5"
+QGROUP="0"
+SNAPPER_EOF
+
+	# Enable Snapper services
+	systemctl enable snapper-timeline.timer 2>/dev/null || true
+	systemctl enable snapper-cleanup.timer 2>/dev/null || true
+
+	# Create initial Snapper snapshot
+	snapper -c root create -d "NexusOS Initial Installation" 2>/dev/null || true
+
+	# Configure Timeshift for full backups
+	mkdir -p /timeshift/backups
+
+	cat > /etc/timeshift/timeshift.json << 'TIMESHIFT_EOF'
+{
+  "btrfs_mode": false,
+  "check_boot_partition": true,
+  "check_root_partition": true,
+  "custom_cron_expr": "0 0 * * *",
+  "exclude": ["/dev", "/proc", "/sys", "/tmp", "/run", "/mnt", "/media", "/var/log", "/var/cache", "/var/tmp", "/home/*/.cache", "/home/*/.local/share/Trash"],
+  "exclude_from_rsync": ["- /dev", "- /proc", "- /sys", "- /tmp", "- /run", "- /mnt", "- /media"],
+  "exclude_pidgin_config": false,
+  "skip_grub": false,
+  "skip_grub_i386": true,
+  "gvfs_metadata": true,
+  "include_btrfs_home_subvolumes": false,
+  "include_btrfs_system_subvolumes": false,
+  "notify": true,
+  "snapshot_levels": "5:7:4-2",
+  "snapshot_size": 2000,
+  "app_version": "21.09.1",
+  "schedule_monthly": false,
+  "schedule_weekly": false,
+  "schedule_daily": true,
+  "schedule_hourly": false,
+  "schedule_boot": false,
+  "user_aware": true,
+  "versioning": true
+}
+TIMESHIFT_EOF
+
+	# Create Timeshift daily service
+	cat > /etc/cron.daily/timeshift-backup << 'TIMESHIFT_CRON_EOF'
+#!/bin/bash
+echo "[$(date)] Iniciando backup automático de Timeshift..." >> /var/log/timeshift-backup.log
+/usr/bin/timeshift --create --comments "NexusOS Daily Backup" >> /var/log/timeshift-backup.log 2>&1
+/usr/bin/timeshift --delete-all --older-than 7d >> /var/log/timeshift-backup.log 2>&1
+echo "[$(date)] Backup completado" >> /var/log/timeshift-backup.log
+TIMESHIFT_CRON_EOF
+	chmod +x /etc/cron.daily/timeshift-backup
+
+	# Enable Timeshift services
+	systemctl enable timeshift-daily.timer 2>/dev/null || true
+	systemctl start timeshift-daily.timer 2>/dev/null || true
 
 	# Remove build tools for slimmer image
 	rm /usr/share/libalpm/hooks/70-dkms-install.hook

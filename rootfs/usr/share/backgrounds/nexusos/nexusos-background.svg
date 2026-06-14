@@ -1,0 +1,54 @@
+<svg viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#0a0e27;stop-opacity:1" />
+    </radialGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0e27;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0f1535;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a0033;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Main background -->
+  <rect width="1920" height="1080" fill="url(#bgGrad)"/>
+
+  <!-- Radial glow from center -->
+  <rect width="1920" height="1080" fill="url(#centerGlow)"/>
+
+  <!-- Grid lines -->
+  <defs>
+    <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#00d4ff" stroke-width="0.5" opacity="0.05"/>
+    </pattern>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#grid)"/>
+
+  <!-- Diagonal accent lines -->
+  <line x1="0" y1="0" x2="1920" y2="1080" stroke="#00d4ff" stroke-width="1" opacity="0.1"/>
+  <line x1="1920" y1="0" x2="0" y2="1080" stroke="#7c3aed" stroke-width="1" opacity="0.1"/>
+
+  <!-- Corner accents -->
+  <g opacity="0.2">
+    <circle cx="100" cy="100" r="150" fill="none" stroke="#00d4ff" stroke-width="1"/>
+    <circle cx="1820" cy="980" r="150" fill="none" stroke="#7c3aed" stroke-width="1"/>
+  </g>
+
+  <!-- Bottom bar - NexusOS branding -->
+  <rect x="0" y="950" width="1920" height="130" fill="#0a0e27" opacity="0.8"/>
+  <line x1="0" y1="950" x2="1920" y2="950" stroke="#00d4ff" stroke-width="2" opacity="0.5"/>
+
+  <!-- Logo and text -->
+  <g transform="translate(1820, 1000)">
+    <!-- Small hexagon logo -->
+    <g transform="scale(0.3)">
+      <polygon points="0,-40 35,-20 35,20 0,40 -35,20 -35,-20" fill="none" stroke="#00d4ff" stroke-width="2"/>
+      <circle cx="0" cy="0" r="6" fill="#00d4ff"/>
+    </g>
+  </g>
+
+  <!-- Text -->
+  <text x="100" y="1020" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="#00d4ff" letter-spacing="2">NEXUSOS</text>
+  <text x="100" y="1055" font-family="Arial, sans-serif" font-size="14" fill="#00d4ff" opacity="0.6" letter-spacing="1">GAMING PLATFORM v1.0</text>
+</svg>

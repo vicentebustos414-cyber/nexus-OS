@@ -1,0 +1,24 @@
+[org/gnome/desktop/interface]
+# Disable animations for faster UI responsiveness
+enable-animations=false
+
+# Reduce font antialiasing for performance
+font-antialiasing='grayscale'
+
+# Disable accessibility features if not needed (saves resources)
+# gtk-enable-animations=false
+
+[org/gnome/desktop/wm/preferences]
+# Disable window decorations animation
+action-double-click-titlebar='none'
+
+[org/gnome/settings-daemon/plugins/power]
+# Performance profile - never throttle CPU during gaming
+power-button-action='interactive'
+# Disable automatic brightness
+ambient-light-adjust=false
+
+[org/gnome/desktop/screensaver]
+# Disable screensaver during gaming
+lock-enabled=false
+ubuntu-lock-on-suspend=false

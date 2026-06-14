@@ -1,9 +1,10 @@
 # dconf path
 [org/gnome/desktop/background]
 
-# dconf key names and their corresponding values
-picture-uri='file:///usr/share/backgrounds/chimeraos/chimeraos_background.png'
-picture-uri-dark='file:///usr/share/backgrounds/chimeraos/chimeraos_background.png'
+# NexusOS Background Configuration
+picture-uri='file:///usr/share/backgrounds/nexusos/nexusos-background.svg'
+picture-uri-dark='file:///usr/share/backgrounds/nexusos/nexusos-background.svg'
 picture-options='scaled'
-primary-color='000000'
-secondary-color='000000'
+# Dark blue-purple gradient base colors
+primary-color='0a0e27'
+secondary-color='1a0033'

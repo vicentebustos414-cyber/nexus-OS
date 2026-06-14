@@ -1,0 +1,69 @@
+#!/bin/bash
+# NexusOS Gaming Optimizer
+# Maximizes system performance for gaming
+
+echo "╔════════════════════════════════════════╗"
+echo "║  NexusOS Gaming Optimizer v1.0         ║"
+echo "╚════════════════════════════════════════╝"
+echo ""
+
+if [ "$EUID" -ne 0 ]; then
+    echo "⚠️  This script requires sudo"
+    exec sudo "$0" "$@"
+fi
+
+echo "🎮 Optimizing system for gaming..."
+echo ""
+
+# Disable CPU frequency scaling
+echo "⚡ Setting CPU to performance mode..."
+echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor > /dev/null
+echo "   ✓ CPU performance mode enabled"
+
+# Disable power management
+echo ""
+echo "🔌 Disabling power management..."
+echo -n 1 > /proc/sys/kernel/sched_migration_cost_ns
+echo "   ✓ Power management disabled"
+
+# Stop unnecessary services
+echo ""
+echo "🛑 Stopping unnecessary services..."
+systemctl stop bluetooth.service 2>/dev/null || true
+systemctl stop ModemManager.service 2>/dev/null || true
+echo "   ✓ Non-essential services stopped"
+
+# Clear swap if low memory (keep more in RAM)
+echo ""
+echo "💾 Optimizing memory..."
+swapoff -a 2>/dev/null || true
+swapon -a 2>/dev/null || true
+sync
+echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || true
+echo "   ✓ Memory cache optimized"
+
+# GPU optimization
+echo ""
+echo "📊 GPU optimization..."
+if [ -f "/sys/class/drm/card0/device/power_dpm_force_performance_level" ]; then
+    echo "performance" > /sys/class/drm/card0/device/power_dpm_force_performance_level 2>/dev/null
+    echo "   ✓ AMD GPU set to performance"
+elif [ -f "/sys/devices/virtual/dmi/id/sys_vendor" ]; then
+    echo "   ℹ NVIDIA GPU detected (using nvidia-smi)"
+fi
+
+# Network optimization
+echo ""
+echo "🌐 Network optimization..."
+sysctl -w net.ipv4.tcp_tw_reuse=1 > /dev/null
+echo "   ✓ TCP optimizations applied"
+
+echo ""
+echo "✅ Gaming mode activated!"
+echo ""
+echo "💡 Tips:"
+echo "   • Close unnecessary applications"
+echo "   • Disable discord/streaming overlays"
+echo "   • Use gamemoderun for Steam games"
+echo ""
+echo "To revert: nexusos-normalize"

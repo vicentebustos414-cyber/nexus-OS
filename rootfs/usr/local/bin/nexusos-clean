@@ -1,0 +1,51 @@
+#!/bin/bash
+# NexusOS System Cleanup Script
+# Removes cache, temp files, and unnecessary packages
+
+echo "╔════════════════════════════════════════╗"
+echo "║  NexusOS System Cleanup v1.0           ║"
+echo "╚════════════════════════════════════════╝"
+echo ""
+
+if [ "$EUID" -ne 0 ]; then
+    echo "⚠️  This script requires sudo"
+    exec sudo "$0" "$@"
+fi
+
+TOTAL_FREED=0
+
+echo "🗑️  Removing package cache..."
+CACHE_SIZE=$(du -sh /var/cache/pacman/pkg/ | cut -f1)
+pacman -Sc --noconfirm > /dev/null
+echo "   Freed: $CACHE_SIZE"
+
+echo ""
+echo "🧹 Clearing temporary files..."
+rm -rf /tmp/* 2>/dev/null
+rm -rf /var/tmp/* 2>/dev/null
+rm -rf ~/.cache/* 2>/dev/null
+echo "   ✓ /tmp, /var/tmp, ~/.cache cleared"
+
+echo ""
+echo "📦 Removing unused packages..."
+pacman -Qdtq | pacman -Rns - --noconfirm 2>/dev/null || true
+echo "   ✓ Orphaned packages removed"
+
+echo ""
+echo "📜 Rotating logs..."
+journalctl --rotate
+journalctl --vacuum=1month > /dev/null
+echo "   ✓ Logs rotated and compressed"
+
+echo ""
+echo "🎮 Clearing shader cache..."
+rm -rf ~/.cache/mesa_shader_cache/* 2>/dev/null
+rm -rf ~/.cache/vulkan/* 2>/dev/null
+echo "   ✓ Shader cache cleared"
+
+echo ""
+echo "💾 Current disk usage:"
+df -h / | tail -1
+
+echo ""
+echo "✅ Cleanup complete!"

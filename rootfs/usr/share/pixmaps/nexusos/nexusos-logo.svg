@@ -1,0 +1,48 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0099cc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6d28d9;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" fill="#0a0e27"/>
+
+  <!-- Outer glow circle -->
+  <circle cx="256" cy="256" r="240" fill="none" stroke="url(#grad1)" stroke-width="2" opacity="0.3"/>
+
+  <!-- Nexus symbol - convergent lines forming a power core -->
+  <g transform="translate(256, 256)">
+    <!-- Central hexagon -->
+    <polygon points="0,-40 35,-20 35,20 0,40 -35,20 -35,-20" fill="url(#grad1)" opacity="0.9"/>
+
+    <!-- Hexagon outline -->
+    <polygon points="0,-40 35,-20 35,20 0,40 -35,20 -35,-20" fill="none" stroke="url(#grad2)" stroke-width="2"/>
+
+    <!-- Energy lines radiating outward -->
+    <line x1="0" y1="-40" x2="0" y2="-100" stroke="url(#grad1)" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+    <line x1="35" y1="-20" x2="80" y2="-45" stroke="url(#grad1)" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+    <line x1="35" y1="20" x2="80" y2="45" stroke="url(#grad1)" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+    <line x1="0" y1="40" x2="0" y2="100" stroke="url(#grad1)" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+    <line x1="-35" y1="20" x2="-80" y2="45" stroke="url(#grad1)" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+    <line x1="-35" y1="-20" x2="-80" y2="-45" stroke="url(#grad1)" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+
+    <!-- Center dot -->
+    <circle cx="0" cy="0" r="6" fill="#00d4ff" opacity="0.9"/>
+
+    <!-- Rotating aura circles -->
+    <circle cx="0" cy="0" r="60" fill="none" stroke="url(#grad1)" stroke-width="1" opacity="0.2"/>
+    <circle cx="0" cy="0" r="90" fill="none" stroke="url(#grad2)" stroke-width="1" opacity="0.1"/>
+  </g>
+
+  <!-- Text: NexusOS -->
+  <text x="256" y="420" font-family="Arial, sans-serif" font-size="48" font-weight="bold" text-anchor="middle" fill="url(#grad1)" letter-spacing="2">NEXUSOS</text>
+
+  <!-- Subtitle: Gaming Platform -->
+  <text x="256" y="460" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" fill="#00d4ff" opacity="0.7" letter-spacing="1">GAMING PLATFORM</text>
+</svg>

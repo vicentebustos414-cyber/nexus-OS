@@ -1,0 +1,15 @@
+[org/gnome/desktop/interface]
+# NexusOS Color Scheme - Dark mode with cyan/purple accents
+color-scheme='prefer-dark'
+gtk-theme='Adwaita-dark'
+icon-theme='Adwaita'
+cursor-theme='Adwaita'
+
+[org/gnome/desktop/wm/preferences]
+# Window theme
+theme='Adwaita-dark'
+title-font='Sans Bold 11'
+
+[org/gnome/shell]
+# Shell extensions and theme
+prefer-dark-style=true

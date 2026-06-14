@@ -1,0 +1,46 @@
+#!/bin/bash
+# NexusOS Normalization Script
+# Reverts gaming mode to balanced state
+
+echo "╔════════════════════════════════════════╗"
+echo "║  NexusOS Normalize v1.0                ║"
+echo "╚════════════════════════════════════════╝"
+echo ""
+
+if [ "$EUID" -ne 0 ]; then
+    echo "⚠️  This script requires sudo"
+    exec sudo "$0" "$@"
+fi
+
+echo "⚙️  Reverting to balanced mode..."
+echo ""
+
+# Re-enable CPU frequency scaling
+echo "📊 Setting CPU to powersave mode..."
+echo powersave | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor > /dev/null
+echo "   ✓ CPU powersave mode enabled"
+
+# Re-enable power management
+echo ""
+echo "🔌 Re-enabling power management..."
+sysctl -w kernel.sched_migration_cost_ns=5000000 > /dev/null
+echo "   ✓ Power management restored"
+
+# Restart services
+echo ""
+echo "🚀 Restarting services..."
+systemctl start bluetooth.service 2>/dev/null || true
+systemctl start ModemManager.service 2>/dev/null || true
+echo "   ✓ Services restarted"
+
+# Apply balanced profile
+echo ""
+echo "⚖️  Applying balanced profile..."
+sysctl -w vm.swappiness=10 > /dev/null
+echo "   ✓ Balanced profile applied"
+
+echo ""
+echo "✅ System normalized!"
+echo ""
+echo "💡 System is now in balanced mode"
+echo "   Better battery life, normal performance"

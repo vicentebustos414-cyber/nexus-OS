@@ -1,0 +1,92 @@
+#!/bin/bash
+# NexusOS Diagnostic Tool
+# Provides detailed system diagnostics
+
+echo "╔════════════════════════════════════════╗"
+echo "║  NexusOS Diagnostic v1.0               ║"
+echo "╚════════════════════════════════════════╝"
+echo ""
+
+# System Info
+echo "📊 SYSTEM INFORMATION"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "OS: $(lsb_release -ds 2>/dev/null || cat /etc/os-release | grep PRETTY_NAME)"
+echo "Kernel: $(uname -r)"
+echo "CPU: $(grep -m1 'model name' /proc/cpuinfo | cut -d: -f2 | xargs)"
+echo "RAM: $(free -h | grep Mem | awk '{print $2}')"
+echo "Disk: $(df -h / | tail -1 | awk '{print $2, "used:", $3}')"
+echo ""
+
+# GPU Info
+echo "🎮 GPU INFORMATION"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+if command -v nvidia-smi &> /dev/null; then
+    echo "NVIDIA GPU detected:"
+    nvidia-smi --query-gpu=name,memory.total --format=csv,noheader
+else
+    echo "Checking for AMD GPU..."
+    if lspci | grep -i "VGA.*AMD" > /dev/null; then
+        echo "AMD GPU detected"
+        dmesg | grep -i "radeon\|amdgpu" | tail -1
+    else
+        echo "Using integrated graphics (Intel)"
+    fi
+fi
+echo ""
+
+# Performance
+echo "⚡ PERFORMANCE METRICS"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "CPU Usage: $(top -bn1 | grep "Cpu(s)" | sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | awk '{print 100 - $1"%"}')"
+echo "Memory Usage: $(free | grep Mem | awk '{printf("%.1f%%", $3/$2 * 100.0)}')"
+echo "Swap Usage: $(free | grep Swap | awk '{if($2>0) printf("%.1f%%", $3/$2 * 100.0); else print "0%"}')"
+echo "Temperature: $(sensors 2>/dev/null | grep -i "core\|package" | head -1 || echo "N/A")"
+echo ""
+
+# Gaming Components
+echo "🎮 GAMING COMPONENTS"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo -n "Steam: "
+[ -d "$HOME/.steam" ] && echo "✓ Installed" || echo "✗ Not found"
+echo -n "Proton: "
+[ -d "$HOME/.steam/root/compatibilitytools.d" ] && echo "✓ Installed" || echo "✗ Not found"
+echo -n "RetroArch: "
+command -v retroarch &> /dev/null && echo "✓ Installed" || echo "✗ Not found"
+echo -n "PCSX2: "
+command -v pcsx2 &> /dev/null && echo "✓ Installed" || echo "✗ Not found"
+echo ""
+
+# Audio System
+echo "🎵 AUDIO SYSTEM"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+if pactl list short clients &> /dev/null; then
+    echo "Pipewire: ✓ Running"
+    echo "Active streams: $(pactl list short clients | wc -l)"
+else
+    echo "Pipewire: ✗ Not running"
+fi
+echo ""
+
+# Network
+echo "🌐 NETWORK"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo -n "Connection: "
+if ping -c1 8.8.8.8 &> /dev/null; then
+    echo "✓ Connected"
+    PING=$(ping -c1 8.8.8.8 | grep time= | sed 's/.*time=\([^ ]*\).*/\1/')
+    echo "Latency: $PING"
+else
+    echo "✗ No connection"
+fi
+echo ""
+
+# System Health
+echo "🏥 SYSTEM HEALTH"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo -n "Boot time: "
+systemd-analyze | grep "Startup finished" | cut -d' ' -f4-
+echo -n "Errors in journal: "
+journalctl -p 3 -x --no-pager | wc -l
+echo ""
+
+echo "✅ Diagnostic complete!"
