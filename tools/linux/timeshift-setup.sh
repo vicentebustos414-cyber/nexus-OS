@@ -31,12 +31,14 @@ echo -e "${COLOR_GREEN}✓ Timeshift instalado${COLOR_RESET}"
 echo -e "\n${COLOR_CYAN}[2/5] Detectando almacenamiento...${COLOR_RESET}"
 
 # Buscar partición más grande que no sea root
-BACKUP_DISK=$(lsblk -l -o NAME,TYPE,MOUNTPOINT,SIZE | grep disk | awk '{print $1}' | head -1)
+BACKUP_DISK=$(lsblk -l -o NAME,TYPE,MOUNTPOINT,SIZE 2>/dev/null | grep -E '^sd|^nvme' | awk '{print $1}' | head -1)
 if [ -z "$BACKUP_DISK" ]; then
-    BACKUP_DISK="/home"
+    echo -e "${COLOR_RED}ERROR: No additional disk found for backups${COLOR_RESET}"
+    echo "Require almacenamiento adicional para backups de Timeshift"
+    exit 1
 fi
 
-echo -e "${COLOR_YELLOW}Almacenamiento de backups: $BACKUP_DISK${COLOR_RESET}"
+echo -e "${COLOR_YELLOW}Almacenamiento de backups: /dev/$BACKUP_DISK${COLOR_RESET}"
 
 # 3. Crear estructura de directorios
 echo -e "\n${COLOR_CYAN}[3/5] Creando directorios de backup...${COLOR_RESET}"

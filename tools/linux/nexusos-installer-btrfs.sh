@@ -110,7 +110,11 @@ echo -e "\n${COLOR_CYAN}Configurando GRUB para recovery...${COLOR_RESET}"
 pacman -S --noconfirm grub btrfs-progs
 
 # Regenerar GRUB para incluir submenu de snapshots
-grub-mkconfig -o /boot/grub/grub.cfg 2>/dev/null || true
+if ! grub-mkconfig -o /boot/grub/grub.cfg; then
+    echo -e "${COLOR_RED}✗ GRUB configuration failed - system may not boot${COLOR_RESET}"
+    echo "Run manually: sudo grub-mkconfig -o /boot/grub/grub.cfg"
+    exit 1
+fi
 
 echo -e "\n${COLOR_GREEN}═══════════════════════════════════════════════════════════${COLOR_RESET}"
 echo -e "${COLOR_GREEN}✓ Snapper + Btrfs instalado correctamente${COLOR_RESET}"

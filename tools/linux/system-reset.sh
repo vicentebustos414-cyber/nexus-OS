@@ -53,9 +53,14 @@ STEPS_COMPLETED=$((STEPS_COMPLETED + 1))
 # PASO 3: Limpiar cache
 echo -e "${CYAN}[3/5] Limpiando cache del sistema...${NC}"
 sudo sync
-sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
+
+if sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches' 2>/dev/null; then
+    echo -e "${GREEN}✓ Cache limpiado${NC}"
+else
+    echo -e "${YELLOW}⚠ No se pudo limpiar cache (puede requerir privilegios)${NC}"
+fi
+
 rm -rf ~/.cache/* 2>/dev/null || true
-echo -e "${GREEN}✓ Cache limpiado${NC}"
 STEPS_COMPLETED=$((STEPS_COMPLETED + 1))
 
 # PASO 4: Restaurar servicios

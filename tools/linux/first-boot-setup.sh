@@ -12,8 +12,8 @@ CYAN='\033[0;36m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Archivo de control
-SETUP_COMPLETED="/home/gamer/.nexusos-setup-done"
+# Archivo de control (se inicializará después de obtener el usuario)
+SETUP_COMPLETED=""
 
 # ═══════════════════════════════════════════════════════════════════
 # FUNCIONES
@@ -113,6 +113,9 @@ setup_user() {
         echo -e "${GREEN}✓ Usuario: gamer${NC}"
     fi
 
+    # Inicializar SETUP_COMPLETED con el usuario correcto
+    SETUP_COMPLETED="${HOME}/.nexusos-setup-done"
+
     sleep 1
 }
 
@@ -139,7 +142,13 @@ select_resolution() {
         4) RESOLUTION="2560x1440" ;;
         5)
             # Detectar
-            RESOLUTION=$(xrandr | grep connected | head -1 | awk '{print $3}' | tr 'x' 'x')
+            if ! command -v xrandr &> /dev/null; then
+                RESOLUTION="1920x1080"
+                echo -e "${YELLOW}⚠ xrandr no disponible, usando resolución por defecto${NC}"
+            else
+                RESOLUTION=$(xrandr 2>/dev/null | grep ' connected primary' | awk '{print $4}' | cut -d'+' -f1)
+                RESOLUTION=${RESOLUTION:-1920x1080}
+            fi
             ;;
         *) select_resolution ;;
     esac

@@ -291,16 +291,39 @@ export FILES_TO_DELETE="\
 
 postinstallhook() {
 	# Add sudo permissions
+	if [ -z "${USERNAME}" ]; then
+		echo "ERROR: USERNAME not set"
+		exit 1
+	fi
+
 	sed -i '/%wheel ALL=(ALL:ALL) ALL/s/^# //g' /etc/sudoers
-	echo "${USERNAME} ALL=(ALL) NOPASSWD: /usr/bin/dmidecode -t 11
-	" >/etc/sudoers.d/steam
-	echo "${USERNAME} ALL=(ALL) NOPASSWD: /usr/bin/chimera-session-use-gamescope
-	${USERNAME} ALL=(ALL) NOPASSWD: /usr/bin/chimera-session-use-lightdm
-	${USERNAME} ALL=(ALL) NOPASSWD: /usr/share/chimera/bin/power-tool
-	${USERNAME} ALL=(ALL) NOPASSWD: /usr/bin/snapper
-	${USERNAME} ALL=(ALL) NOPASSWD: /usr/bin/timeshift
-	${USERNAME} ALL=(ALL) NOPASSWD: /usr/sbin/timeshift-launcher
-	" >/etc/sudoers.d/chimera
+
+	# Create sudoers file for steam gaming
+	{
+		echo "${USERNAME} ALL=(ALL) NOPASSWD: /usr/bin/dmidecode -t 11"
+	} > /etc/sudoers.d/steam
+	chmod 0440 /etc/sudoers.d/steam
+
+	# Create sudoers file for chimera session
+	{
+		echo "${USERNAME} ALL=(ALL) NOPASSWD: /usr/bin/chimera-session-use-gamescope"
+		echo "${USERNAME} ALL=(ALL) NOPASSWD: /usr/bin/chimera-session-use-lightdm"
+		echo "${USERNAME} ALL=(ALL) NOPASSWD: /usr/share/chimera/bin/power-tool"
+		echo "${USERNAME} ALL=(ALL) NOPASSWD: /usr/bin/snapper"
+		echo "${USERNAME} ALL=(ALL) NOPASSWD: /usr/bin/timeshift"
+		echo "${USERNAME} ALL=(ALL) NOPASSWD: /usr/sbin/timeshift-launcher"
+	} > /etc/sudoers.d/chimera
+	chmod 0440 /etc/sudoers.d/chimera
+
+	# Validate sudoers syntax
+	if ! visudo -c -f /etc/sudoers.d/steam 2>/dev/null; then
+		echo "ERROR: Invalid sudoers syntax in /etc/sudoers.d/steam"
+		exit 1
+	fi
+	if ! visudo -c -f /etc/sudoers.d/chimera 2>/dev/null; then
+		echo "ERROR: Invalid sudoers syntax in /etc/sudoers.d/chimera"
+		exit 1
+	fi
 
 	# download and add racing wheel udev rules
 	pushd /usr/lib/udev/rules.d

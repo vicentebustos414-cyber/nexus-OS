@@ -48,7 +48,7 @@ for file in "$ROMS_PATH"/*; do
         snes|smc) SNES_COUNT=$((SNES_COUNT + 1)) ;;
         z64|n64) N64_COUNT=$((N64_COUNT + 1)) ;;
         gba) GBA_COUNT=$((GBA_COUNT + 1)) ;;
-        iso|bin) PS1_COUNT=$((PS1_COUNT + 1)) ;;
+        bin|cue) PS1_COUNT=$((PS1_COUNT + 1)) ;;
         iso) PS2_COUNT=$((PS2_COUNT + 1)) ;;
         xci|nso) SWITCH_COUNT=$((SWITCH_COUNT + 1)) ;;
         *) UNKNOWN_COUNT=$((UNKNOWN_COUNT + 1)) ;;

@@ -22,6 +22,7 @@ check_dependencies() {
     echo "Checking dependencies..." | tee -a "$LOG_FILE"
 
     local missing_deps=0
+    local PIP_CMD="pip3"
 
     # Python
     if ! command -v python3 &> /dev/null; then
@@ -29,26 +30,44 @@ check_dependencies() {
         missing_deps=1
     fi
 
+    # Detectar pip command disponible
+    if ! command -v pip3 &> /dev/null; then
+        PIP_CMD="pip"
+        if ! command -v pip &> /dev/null; then
+            echo "ERROR: pip or pip3 not found" | tee -a "$LOG_FILE"
+            missing_deps=1
+        fi
+    fi
+
     # CustomTkinter
     if ! python3 -c "import customtkinter" 2>/dev/null; then
         echo "Installing customtkinter..." | tee -a "$LOG_FILE"
-        pip install customtkinter --quiet
+        if ! $PIP_CMD install customtkinter --quiet; then
+            echo "ERROR: Failed to install customtkinter" | tee -a "$LOG_FILE"
+            missing_deps=1
+        fi
     fi
 
     # PSUtil
     if ! python3 -c "import psutil" 2>/dev/null; then
         echo "Installing psutil..." | tee -a "$LOG_FILE"
-        pip install psutil --quiet
+        if ! $PIP_CMD install psutil --quiet; then
+            echo "ERROR: Failed to install psutil" | tee -a "$LOG_FILE"
+            missing_deps=1
+        fi
     fi
 
     # Pillow
     if ! python3 -c "import PIL" 2>/dev/null; then
         echo "Installing Pillow..." | tee -a "$LOG_FILE"
-        pip install Pillow --quiet
+        if ! $PIP_CMD install Pillow --quiet; then
+            echo "ERROR: Failed to install Pillow" | tee -a "$LOG_FILE"
+            missing_deps=1
+        fi
     fi
 
     if [ $missing_deps -eq 1 ]; then
-        echo "Missing dependencies. Please install Python 3." | tee -a "$LOG_FILE"
+        echo "Missing dependencies or installation failed. Please install manually." | tee -a "$LOG_FILE"
         exit 1
     fi
 

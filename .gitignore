@@ -1,6 +1,77 @@
-*.SRCINFO
-*.img.tar.xz
+# Build artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+
+# Directories
+build/
+dist/
+*.egg-info/
+__pycache__/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+.tmp/
+
+# OS specific
+Thumbs.db
+.AppleDouble
+.LSOverride
+
+# Package managers
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+*.iso
 *.img
-.cache/*
-output/*
-rootfs/etc/makepkg.conf
+*.tar.xz
+*.tar.gz
+*.zip
+
+# Cache
+.cache/
+*.cache
+
+# Local development
+.local/
+.venv/
+venv/
+env/
+
+# Windows specific
+*.ps1.bak
+$RECYCLE.BIN/
+
+# Version control
+!scripts/
+!tools/
+!.github/

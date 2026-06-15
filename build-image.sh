@@ -31,7 +31,7 @@ VERSION_NUMBER=${VERSION}
 if [ -n "$1" ]; then
 	DISPLAY_VERSION="${VERSION} (${1})"
 	VERSION="${VERSION}_${1}"
-	LSB_VERSION="${LSB_VERSION}　(${1})"
+	LSB_VERSION="${LSB_VERSION} (${1})"
 	BUILD_ID="${1}"
 fi
 
@@ -73,7 +73,10 @@ fi
 
 # download kernel packages from oci container if required
 if [ "$KERNEL_PACKAGE_ORIGIN" != "local" ] && [ "$KERNEL_PACKAGE_ORIGIN" != "repo" ] ; then
-	oras pull "${KERNEL_PACKAGE_ORIGIN}" --output /override_pkgs
+	if ! oras pull "${KERNEL_PACKAGE_ORIGIN}" --output /override_pkgs; then
+		echo "ERROR: Failed to download kernel package from ${KERNEL_PACKAGE_ORIGIN}"
+		exit 1
+	fi
 	rm -f /override_pkgs/${KERNEL_PACKAGE}-docs*.pkg.tar.zst
 fi
 

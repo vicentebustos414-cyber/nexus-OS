@@ -13,7 +13,12 @@ COLOR_RESET="\033[0m"
 
 # Función para detectar GPU
 detect_gpu() {
-    local gpu_vendor=$(lspci | grep -i vga | head -1)
+    local gpu_vendor=$(lspci 2>/dev/null | grep -i vga | head -1)
+
+    if [ -z "$gpu_vendor" ]; then
+        echo "unknown"
+        return
+    fi
 
     if [[ $gpu_vendor == *"NVIDIA"* ]]; then
         echo "nvidia"
@@ -32,10 +37,16 @@ install_nvidia() {
     echo -e "${COLOR_YELLOW}Instalando drivers NVIDIA...${COLOR_RESET}"
 
     # Instalar driver
-    pacman -S --noconfirm nvidia nvidia-utils lib32-nvidia-utils
+    if ! pacman -S --noconfirm nvidia nvidia-utils lib32-nvidia-utils; then
+        echo -e "${COLOR_RED}✗ Error instalando drivers NVIDIA${COLOR_RESET}"
+        return 1
+    fi
 
     # Instalar utilidades
-    pacman -S --noconfirm nvidia-settings cuda
+    if ! pacman -S --noconfirm nvidia-settings cuda; then
+        echo -e "${COLOR_RED}✗ Error instalando utilidades NVIDIA${COLOR_RESET}"
+        return 1
+    fi
 
     # Habilitar DRM
     echo -e "\n${COLOR_CYAN}Configurando kernel parameters...${COLOR_RESET}"
@@ -91,7 +102,12 @@ install_intel() {
 install_vulkan() {
     echo -e "${COLOR_CYAN}[Gráficos] Instalando Vulkan...${COLOR_RESET}"
 
-    GPU=$1
+    local GPU=${1:-unknown}
+
+    if [[ "$GPU" == "unknown" ]]; then
+        echo -e "${COLOR_RED}✗ GPU type not specified${COLOR_RESET}"
+        return 1
+    fi
 
     case $GPU in
         nvidia)
@@ -105,6 +121,9 @@ install_vulkan() {
         intel)
             pacman -S --noconfirm vulkan-icd-loader lib32-vulkan-icd-loader
             pacman -S --noconfirm vulkan-intel lib32-vulkan-intel
+            ;;
+        *)
+            echo -e "${COLOR_YELLOW}⚠ GPU desconocida: $GPU${COLOR_RESET}"
             ;;
     esac
 
