@@ -12,7 +12,7 @@ export BUG_REPORT_URL="https://nexusos.local/issues"
 
 # CachyOS Kernel - Optimizado para gaming
 export KERNEL_PACKAGE="linux-cachyos"
-export KERNEL_PACKAGE_ORIGIN="https://mirror.cachyos.org/cachyos/x86_64/"
+export KERNEL_PACKAGE_ORIGIN="repo"
 export KERNEL_CONFIG="cachyos-bore"  # BORE scheduler
 
 export PACKAGES="\
