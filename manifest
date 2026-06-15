@@ -223,7 +223,6 @@ export AUR_PACKAGES="\
 	libretro-prosystem-git \
 	libretro-stella2014-git \
 	libretro-virtualjaguar-git \
-	citra-canary \
 	ryujinx \
 	pcsx2 \
 	emulationstation-de \
