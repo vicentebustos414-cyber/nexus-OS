@@ -41,7 +41,7 @@ jobs:
     name: Build AUR package
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         package: ${{ fromJson(needs.list-pkgbuilds.outputs.aur-pkgs) }}
     steps:
@@ -68,7 +68,7 @@ jobs:
     name: Build package
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         package: ${{ fromJson(needs.list-pkgbuilds.outputs.pkgs) }}
     steps:
