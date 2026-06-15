@@ -61,6 +61,7 @@ jobs:
           echo -e "$(docker inspect --format='{{index .RepoDigests 0}}' ${{ steps.meta.outputs.tags }})" > output/container.txt
       - name: Upload system image artifact
         id: upload_system_image_artifact
+        continue-on-error: true
         env:
           ARTIFACT_IMAGE_NAME: ${{ env.ARTIFACT_IMAGE_NAME }}
         run: |
@@ -68,6 +69,15 @@ jobs:
             oras login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ${{ env.REGISTRY }}
             oras push ${{ env.REGISTRY }}/${ARTIFACT_IMAGE_NAME,,}:${{ steps.build_image.outputs.version }} ${{ steps.build_image.outputs.image_filename }}
             oras tag  ${{ env.REGISTRY }}/${ARTIFACT_IMAGE_NAME,,}:${{ steps.build_image.outputs.version }} unstable
+      - name: List output files
+        run: |
+          echo "=== Output directory contents ==="
+          ls -lah output/ || echo "output/ directory not found"
+          echo "=== Build outputs ==="
+          echo "version: ${{ steps.build_image.outputs.version }}"
+          echo "display_name: ${{ steps.build_image.outputs.display_name }}"
+          echo "display_version: ${{ steps.build_image.outputs.display_version }}"
+          echo "image_filename: ${{ steps.build_image.outputs.image_filename }}"
       - name: Create release
         id: create_release
         uses: softprops/action-gh-release@v2
@@ -83,3 +93,4 @@ jobs:
           files: |
             output/*.tar.xz
             output/*.txt
+            output/sha256sum.txt
