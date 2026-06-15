@@ -78,8 +78,9 @@ jobs:
           name: ${{ steps.build_image.outputs.display_name }} ${{ steps.build_image.outputs.display_version }} ${{ inputs.postfix }}
           draft: false
           prerelease: true
-          fail_on_unmatched_files: true
+          fail_on_unmatched_files: false
           files: |
             output/build_info.txt
             output/sha256sum.txt
             output/container.txt
+            output/*.tar.xz
