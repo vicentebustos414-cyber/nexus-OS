@@ -57,7 +57,7 @@ RUN source /manifest && \
   pacman --noconfirm -Syyuu; if [ -n "${PACKAGE_OVERRIDES}" ]; then wget --directory-prefix=/tmp/extra_pkgs ${PACKAGE_OVERRIDES}; pacman --noconfirm -U --overwrite '*' /tmp/extra_pkgs/*; rm -rf /tmp/extra_pkgs; fi
 
 # workaround for failing python-pyglet build required by chimera package
-RUN pacman --noconfirm -U https://archive.archlinux.org/packages/p/python-flit-core/python-flit-core-3.12.0-4-any.pkg.tar.zst
+RUN pacman --noconfirm -S python-flit-core --needed
 
 USER build
 ENV BUILD_USER="build"
