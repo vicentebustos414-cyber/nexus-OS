@@ -69,8 +69,6 @@ export PACKAGES="\
 	htop \
 	gamemode \
 	lib32-gamemode \
-	cachyos-kernels \
-	cachyos-bore-sched \
 	wine \
 	wine-staging \
 	lib32-wine \
