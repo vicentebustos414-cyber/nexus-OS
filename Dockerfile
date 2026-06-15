@@ -56,9 +56,6 @@ RUN source /manifest && \
   echo "Server=https://archive.archlinux.org/repos/${ARCHIVE_DATE}/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist && \
   pacman --noconfirm -Syyuu; if [ -n "${PACKAGE_OVERRIDES}" ]; then wget --directory-prefix=/tmp/extra_pkgs ${PACKAGE_OVERRIDES}; pacman --noconfirm -U --overwrite '*' /tmp/extra_pkgs/*; rm -rf /tmp/extra_pkgs; fi
 
-# workaround for failing python-pyglet build required by chimera package
-RUN pacman --noconfirm -S python-flit-core --needed
-
 USER build
 ENV BUILD_USER="build"
 ENV GNUPGHOME="/etc/pacman.d/gnupg"

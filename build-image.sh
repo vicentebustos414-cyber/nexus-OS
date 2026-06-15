@@ -99,6 +99,20 @@ sed -i '/ParallelDownloads/s/^/#/g' /etc/pacman.conf
 # Cannot check space in chroot
 sed -i '/CheckSpace/s/^/#/g' /etc/pacman.conf
 
+# Add CachyOS repos if kernel comes from repo (linux-cachyos lives there)
+if [ "$KERNEL_PACKAGE_ORIGIN" == "repo" ] ; then
+	cat >> /etc/pacman.conf << 'CACHYOS_REPOS'
+
+[cachyos]
+Server = https://mirror.cachyos.org/repo/$arch/$repo
+SigLevel = Optional TrustAll
+
+[cachyos-extra]
+Server = https://mirror.cachyos.org/repo/$arch/$repo
+SigLevel = Optional TrustAll
+CACHYOS_REPOS
+fi
+
 # update package databases
 pacman --noconfirm -Syy
 
