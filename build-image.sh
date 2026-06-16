@@ -106,10 +106,6 @@ if [ "$KERNEL_PACKAGE_ORIGIN" == "repo" ] ; then
 [cachyos]
 Server = https://mirror.cachyos.org/repo/\$arch/\$repo
 SigLevel = Never
-
-[cachyos-extra]
-Server = https://mirror.cachyos.org/repo/\$arch/\$repo
-SigLevel = Never
 CACHYOS_REPOS
 fi
 

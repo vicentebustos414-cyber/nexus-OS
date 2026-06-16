@@ -71,11 +71,8 @@ export PACKAGES="\
 	lib32-gamemode \
 	wine \
 	wine-staging \
-	lib32-wine \
-	lib32-wine-staging \
 	winetricks \
 	dxvk \
-	lib32-dxvk \
 	vkd3d \
 	lib32-vkd3d \
 	vulkan-icd-loader \
