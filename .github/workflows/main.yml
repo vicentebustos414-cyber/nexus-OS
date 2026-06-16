@@ -93,6 +93,11 @@ jobs:
      - build-docker-image
      - aur-pkgbuild
      - pkgbuild
+    # Run the ISO build even if a single (non-critical) AUR/local package fails.
+    # build-image.sh installs the packages present in aur_pkgs/ & pkgs/ via glob,
+    # so a missing optional package degrades gracefully instead of skipping the
+    # whole image build. Only skip if the docker builder image itself failed.
+    if: ${{ !cancelled() && needs.build-docker-image.result == 'success' }}
     name: Build ChimeraOS UNSTABLE image
     uses: ./.github/workflows/build-system-image.yml
     with:
