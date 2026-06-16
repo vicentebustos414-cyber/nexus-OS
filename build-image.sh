@@ -104,12 +104,12 @@ if [ "$KERNEL_PACKAGE_ORIGIN" == "repo" ] ; then
 	cat >> /etc/pacman.conf << 'CACHYOS_REPOS'
 
 [cachyos]
-Server = https://mirror.cachyos.org/repo/$arch/$repo
-SigLevel = Optional TrustAll
+Server = https://mirror.cachyos.org/repo/\$arch/\$repo
+SigLevel = Never
 
 [cachyos-extra]
-Server = https://mirror.cachyos.org/repo/$arch/$repo
-SigLevel = Optional TrustAll
+Server = https://mirror.cachyos.org/repo/\$arch/\$repo
+SigLevel = Never
 CACHYOS_REPOS
 fi
 
