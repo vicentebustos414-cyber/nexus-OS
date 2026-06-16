@@ -232,7 +232,12 @@ cp -r /var/lib/pacman/local /usr/var/lib/pacman/
 if [ ${KERNEL_PACKAGE} != 'linux' ] ; then
 	mv /boot/vmlinuz-${KERNEL_PACKAGE} /boot/vmlinuz-linux
 	mv /boot/initramfs-${KERNEL_PACKAGE}.img /boot/initramfs-linux.img
-	mv /boot/initramfs-${KERNEL_PACKAGE}-fallback.img /boot/initramfs-linux-fallback.img
+	# Some kernels (e.g. linux-cachyos) do not generate a fallback initramfs.
+	# The fallback is removed later via FILES_TO_DELETE anyway, so only move it
+	# if the preset actually produced one.
+	if [ -f /boot/initramfs-${KERNEL_PACKAGE}-fallback.img ] ; then
+		mv /boot/initramfs-${KERNEL_PACKAGE}-fallback.img /boot/initramfs-linux-fallback.img
+	fi
 fi
 
 # clean up/remove unnecessary files
