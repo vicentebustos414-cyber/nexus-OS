@@ -460,10 +460,22 @@ TIMESHIFT_CRON_EOF
 	# Hacer scripts ejecutables
 	chmod +x /opt/nexus-gaming/ai/nexus-ai.sh
 	chmod +x /opt/nexus-gaming/launcher/nexus-launcher.sh
+	chmod +x /opt/nexus-gaming/ai/proton-manager.sh
+	chmod +x /opt/nexus-gaming/ai/auto-repair.sh
+	chmod +x /opt/nexus-gaming/ai/bottleneck-detection.sh
+	chmod +x /opt/nexus-gaming/ai/dxvk-optimizer.sh
+	chmod +x /opt/nexus-gaming/ai/wine-staging-installer.sh
+	chmod +x /opt/nexus-gaming/ai/lutris-installer.sh
 
 	# Crear symlinks en /usr/local/bin
 	ln -sf /opt/nexus-gaming/ai/nexus-ai.sh /usr/local/bin/nexus-ai
 	ln -sf /opt/nexus-gaming/launcher/nexus-launcher.sh /usr/local/bin/nexus-launcher
+	ln -sf /opt/nexus-gaming/ai/proton-manager.sh /usr/local/bin/proton-manager
+	ln -sf /opt/nexus-gaming/ai/auto-repair.sh /usr/local/bin/auto-repair
+	ln -sf /opt/nexus-gaming/ai/bottleneck-detection.sh /usr/local/bin/bottleneck-detection
+	ln -sf /opt/nexus-gaming/ai/dxvk-optimizer.sh /usr/local/bin/dxvk-optimizer
+	ln -sf /opt/nexus-gaming/ai/wine-staging-installer.sh /usr/local/bin/wine-staging
+	ln -sf /opt/nexus-gaming/ai/lutris-installer.sh /usr/local/bin/lutris-installer
 
 	# Crear aplicación de escritorio para launcher
 	cat > /usr/share/applications/nexus-launcher.desktop << 'DESKTOP_EOF'
@@ -479,10 +491,18 @@ EOF
 
 	chmod +x /usr/share/applications/nexus-launcher.desktop
 
-	log "✅ NexusOS Gaming Ecosystem instalado"
-	log "   Comandos disponibles:"
+	log "✅ NexusOS Gaming Ecosystem instalado (MEGA EDITION)"
+	log "   🎮 Comandos de AI:"
 	log "   - nexus-ai search|predict|optimize|launch|hardware"
-	log "   - nexus-launcher (menú interactivo)"
+	log "   - nexus-launcher (menú interactivo completo)"
+	log ""
+	log "   🚀 Herramientas Avanzadas:"
+	log "   - proton-manager (instalar Proton-GE + Experimental)"
+	log "   - auto-repair (detectar y reparar crashes automáticamente)"
+	log "   - bottleneck-detection (analizar si hardware es suficiente)"
+	log "   - dxvk-optimizer (optimizar DirectX emulation por GPU)"
+	log "   - wine-staging (instalar Wine Staging + patches gaming)"
+	log "   - lutris-installer (descargar 1000+ scripts preconfigurados)"
 
 	# ========== NexusOS Optimization Tweaks ==========
 	# TLP - Power management
