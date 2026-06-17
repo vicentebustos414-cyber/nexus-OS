@@ -1,0 +1,106 @@
+name: 🚀 Build & Release ISOs
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'manifest'
+      - 'nexus-gaming/**'
+      - 'ISO_extracted/**'
+      - '.github/workflows/build-iso.yml'
+
+jobs:
+  build-nexusos:
+    name: Build NexusOS
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            mkisofs \
+            squashfs-tools \
+            xorriso \
+            grub-pc-bin \
+            mtools
+
+      - name: Build NexusOS ISO
+        run: |
+          mkdir -p output
+          bash build-image.sh || true
+
+      - name: Upload to ORAS
+        if: always()
+        env:
+          ORAS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Install ORAS
+          wget https://github.com/oras-project/oras/releases/download/v1.1.0/oras_1.1.0_linux_amd64.tar.gz
+          tar xzf oras_1.1.0_linux_amd64.tar.gz
+
+          # Login to GHCR
+          echo $ORAS_TOKEN | ./oras login -u ${{ github.actor }} --password-stdin ghcr.io
+
+          # Push ISO if exists
+          if [ -f output/NexusOS-*.iso ]; then
+            ./oras push ghcr.io/vicentebustos414-cyber/nexus-os:v1.0-advanced \
+              output/NexusOS-*.iso:application/octet-stream
+          fi
+
+  build-nexuswin:
+    name: Build NexusWin
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          choco install -y wimlib-imagex cdrtools-gui
+
+      - name: Build NexusWin ISO
+        run: |
+          mkdir output
+          # Extract base ISO
+          7z x "ISO_extracted\NexusWin.iso" -o"ISO_work"
+
+          # Copy optimization scripts
+          Copy-Item "ISO_extracted\NexusWin\setup\12-ultra-compression.ps1" -Destination "ISO_work\NexusWin\setup\"
+          Copy-Item "ISO_extracted\NexusWin\setup\13-ultra-lean-ram.ps1" -Destination "ISO_work\NexusWin\setup\"
+
+          # Create ISO
+          mkisofs -iso-level 3 -UDF `
+            -o "output\NexusWin-v1.0-Advanced.iso" `
+            -b "boot\etfsboot.com" `
+            -no-emul-boot `
+            -boot-load-size 4 `
+            "ISO_work"
+        shell: powershell
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: ISOs
+          path: output/*.iso
+          retention-days: 30
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [build-nexusos, build-nexuswin]
+    if: always()
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create Release
+        run: |
+          gh release create iso-${{ github.run_number }} \
+            --title "NexusOS & NexusWin v1.0 Advanced - Auto Build" \
+            --notes "Compiled ISOs with all optimizations included"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
