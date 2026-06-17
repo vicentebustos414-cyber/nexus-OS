@@ -24,10 +24,12 @@ export PACKAGES="\
 	amd-debug-tools \
 	amd-ucode \
 	bash-completion \
+	blender \
 	broadcom-wl-dkms \
 	btrfs-progs \
 	bzip2 \
 	cifs-utils \
+	code \
 	cpupower \
 	diffutils \
 	dkms \
@@ -203,10 +205,13 @@ export AUR_PACKAGES="\
 	boxtron \
 	chimera \
 	chimeraos-device-quirks-git \
+	discord \
 	downgrade \
 	evdev-keepalive \
+	go \
 	oras \
 	frzr \
+	rust \
 	gamescope-session-steam-git \
 	gamescope-session-steam-plus-git \
 	gpd-fan-driver-dkms-git \
@@ -443,4 +448,56 @@ TIMESHIFT_CRON_EOF
 	# Replace wpctl with a wrapper to work around Steam resetting audio
 	mv /usr/bin/wpctl /usr/libexec/wpctl
 	mv /usr/bin/wpctl-wrapper /usr/bin/wpctl
+
+	# ========== NexusOS Optimization Tweaks ==========
+	# TLP - Power management
+	cat > /etc/tlp.conf << 'TLP_EOF'
+PLATFORM_PROFILE_ON_AC=performance
+PLATFORM_PROFILE_ON_BAT=balanced
+CPU_SCALING_GOVERNOR_ON_AC=performance
+CPU_SCALING_GOVERNOR_ON_BAT=powersave
+CPU_ENERGY_PERF_POLICY_ON_AC=performance
+CPU_ENERGY_PERF_POLICY_ON_BAT=power
+CPU_MIN_PERF_ON_AC=100
+CPU_MAX_PERF_ON_AC=100
+SCHED_POWERSAVE_ON_AC=0
+SCHED_POWERSAVE_ON_BAT=1
+TLP_EOF
+	systemctl enable tlp 2>/dev/null || true
+
+	# Swappiness reduction - less disk swap, more RAM usage
+	cat > /etc/sysctl.d/99-nexus-swappiness.conf << 'SYSCTL_EOF'
+vm.swappiness=10
+vm.vfs_cache_pressure=50
+vm.dirty_ratio=15
+vm.dirty_background_ratio=5
+SYSCTL_EOF
+
+	# I/O scheduler optimization for gaming
+	cat > /etc/udev/rules.d/99-nexus-ioscheduler.rules << 'UDEV_EOF'
+# NVMe drives - use none scheduler
+ACTION=="add|change", KERNEL=="nvme*", ATTR{queue/scheduler}="none"
+# SSD drives - use mq-deadline
+ACTION=="add|change", KERNEL=="sd*", ATTR{queue/scheduler}="mq-deadline"
+UDEV_EOF
+
+	# Auto-cpufreq installation and setup (if available in AUR)
+	# This will be auto-enabled by the user after install
+
+	# Enable Performance tweaks
+	echo "vm.max_map_count=2147483647" >> /etc/sysctl.conf
+	echo "fs.file-max=524288" >> /etc/sysctl.conf
+
+	# NetworkManager optimization for gaming (DNS caching)
+	sed -i 's/#dns=systemd-resolved/dns=systemd/' /etc/NetworkManager/NetworkManager.conf
+	sed -i 's/#dnssec=default/dnssec=no/' /etc/NetworkManager/NetworkManager.conf
+
+	# Disable bluetooth by default (save power)
+	systemctl disable bluetooth 2>/dev/null || true
+
+	# Enable services for optimization
+	systemctl enable tlp 2>/dev/null || true
+	systemctl enable gamemode 2>/dev/null || true
+
+	echo "[$(date)] NexusOS optimization tweaks applied" >> /var/log/nexusos-install.log
 }
