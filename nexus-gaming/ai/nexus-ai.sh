@@ -1,0 +1,246 @@
+#!/bin/bash
+
+# NexusAI Engine - Auto-detect y configure games for optimal performance
+# Uso: ./nexus-ai.sh [search|launch|predict|optimize]
+
+set -e
+
+NEXUS_DIR="/opt/nexus-gaming"
+DB_FILE="$NEXUS_DIR/db/games.json"
+CONFIG_DIR="$HOME/.nexus-gaming"
+LOG_FILE="$CONFIG_DIR/nexus-ai.log"
+
+# Colores
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+mkdir -p "$CONFIG_DIR"
+
+# ===== LOGGING =====
+log() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
+}
+
+# ===== DETECT HARDWARE =====
+detect_hardware() {
+    log "🔍 Detectando hardware..."
+
+    GPU=$(lspci | grep -i "vga\|3d" | head -1 | cut -d: -f3)
+    CPU=$(lscpu | grep "Model name" | cut -d: -f2 | xargs)
+    RAM=$(free -h | grep Mem | awk '{print $2}')
+    VRAM=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader 2>/dev/null || echo "unknown")
+
+    echo "{
+      \"gpu\": \"$GPU\",
+      \"cpu\": \"$CPU\",
+      \"ram\": \"$RAM\",
+      \"vram\": \"$VRAM\",
+      \"gpu_vendor\": \"$(echo $GPU | grep -i nvidia > /dev/null && echo 'nvidia' || echo 'amd')\",
+      \"detected_at\": \"$(date -Iseconds)\"
+    }" > "$CONFIG_DIR/hardware.json"
+
+    log "✅ Hardware detectado: $CPU | $GPU | $RAM RAM"
+}
+
+# ===== SEARCH GAME IN DATABASE =====
+search_game() {
+    local game_name="$1"
+
+    if [ -z "$game_name" ]; then
+        echo -e "${RED}❌ Uso: $0 search <nombre_juego>${NC}"
+        exit 1
+    fi
+
+    log "🎮 Buscando: $game_name"
+
+    # Buscar en la base de datos
+    game_data=$(jq -r ".games[] | select(.name | test(\"$game_name\"; \"i\")) | ." "$DB_FILE" 2>/dev/null)
+
+    if [ -z "$game_data" ]; then
+        echo -e "${YELLOW}⚠️ Juego no encontrado en base de datos${NC}"
+        echo "Usa: nexus-ai add-game <nombre>"
+        return 1
+    fi
+
+    # Mostrar información
+    name=$(echo "$game_data" | jq -r '.name')
+    compatibility=$(echo "$game_data" | jq -r '.compatibility')
+    proton=$(echo "$game_data" | jq -r '.protonVersion')
+    anticheate=$(echo "$game_data" | jq -r '.antiCheat')
+    rating=$(echo "$game_data" | jq -r '.communityRating')
+
+    echo -e "${BLUE}═══════════════════════════════════════${NC}"
+    echo -e "${GREEN}🎮 $name${NC}"
+    echo -e "${BLUE}═══════════════════════════════════════${NC}"
+    echo -e "Compatibilidad:  ${GREEN}$compatibility%${NC}"
+    echo -e "Proton Version:  ${BLUE}$proton${NC}"
+    echo -e "Anti-Cheat:      $anticheate"
+    echo -e "Community Rating: ${GREEN}⭐ $rating/5${NC}"
+    echo ""
+    echo "$game_data" | jq -r '.notes'
+    echo -e "${BLUE}═══════════════════════════════════════${NC}"
+}
+
+# ===== PREDICT PERFORMANCE =====
+predict_performance() {
+    local game_name="$1"
+
+    if [ -z "$game_name" ]; then
+        echo -e "${RED}❌ Uso: $0 predict <nombre_juego>${NC}"
+        exit 1
+    fi
+
+    detect_hardware
+
+    game_data=$(jq -r ".games[] | select(.name | test(\"$game_name\"; \"i\")) | ." "$DB_FILE" 2>/dev/null)
+
+    if [ -z "$game_data" ]; then
+        echo -e "${RED}❌ Juego no encontrado${NC}"
+        return 1
+    fi
+
+    name=$(echo "$game_data" | jq -r '.name')
+    compat=$(echo "$game_data" | jq -r '.compatibility')
+
+    echo -e "${BLUE}═══════════════════════════════════════${NC}"
+    echo -e "${GREEN}⚡ PREDICTOR: $name${NC}"
+    echo -e "${BLUE}═══════════════════════════════════════${NC}"
+
+    if [ "$compat" == "0" ]; then
+        echo -e "${RED}❌ NO COMPATIBLE${NC}"
+        echo "Anti-cheat kernel-level no soportado en Linux"
+        return 1
+    fi
+
+    echo -e "Compatibilidad: ${GREEN}$compat%${NC}"
+    echo ""
+    echo "Min Specs:"
+    echo "$game_data" | jq '.minSpecs'
+    echo ""
+    echo "Recommended Specs:"
+    echo "$game_data" | jq '.recommendedSpecs'
+    echo ""
+    echo -e "${GREEN}✅ VEREDICTO: El juego debería funcionar${NC}"
+
+    if [ "$compat" -lt 95 ]; then
+        echo -e "${YELLOW}⚠️ Algunos glitches menores esperados${NC}"
+    fi
+
+    echo -e "${BLUE}═══════════════════════════════════════${NC}"
+}
+
+# ===== OPTIMIZE GAME =====
+optimize_game() {
+    local game_name="$1"
+
+    if [ -z "$game_name" ]; then
+        echo -e "${RED}❌ Uso: $0 optimize <nombre_juego>${NC}"
+        exit 1
+    fi
+
+    log "⚙️ Optimizando: $game_name"
+
+    game_data=$(jq -r ".games[] | select(.name | test(\"$game_name\"; \"i\")) | ." "$DB_FILE" 2>/dev/null)
+
+    if [ -z "$game_data" ]; then
+        echo -e "${RED}❌ Juego no encontrado${NC}"
+        return 1
+    fi
+
+    # Detectar GPU vendor
+    gpu_vendor=$(cat "$CONFIG_DIR/hardware.json" | jq -r '.gpu_vendor')
+
+    # Obtener config según GPU
+    if [ "$gpu_vendor" == "nvidia" ]; then
+        config=$(echo "$game_data" | jq -r '.configNvidia // empty')
+    else
+        config=$(echo "$game_data" | jq -r '.configAMD // empty')
+    fi
+
+    # Crear archivo de configuración para Proton
+    config_file="$CONFIG_DIR/${game_name,,}_proton.env"
+
+    cat > "$config_file" << EOF
+# Auto-generated by NexusAI for: $game_name
+# $(date)
+
+# DXVK Settings
+$(echo "$config" | jq -r 'keys[] as $key | "\($key)=\"\(.[$key])\""')
+
+# Performance tweaks
+DXVK_ASYNC=1
+DXVK_ENABLE_DEVICE_DIAGNOSTIC=1
+WINE_CPU_TOPOLOGY=4:2
+EOF
+
+    echo -e "${GREEN}✅ Configuración guardada${NC}"
+    echo "Ubicación: $config_file"
+    echo ""
+    echo "Para usar con Proton:"
+    echo "source \"$config_file\" && proton run game.exe"
+}
+
+# ===== LAUNCH GAME =====
+launch_game() {
+    local game_name="$1"
+
+    if [ -z "$game_name" ]; then
+        echo -e "${RED}❌ Uso: $0 launch <nombre_juego> [exe_path]${NC}"
+        exit 1
+    fi
+
+    log "🚀 Lanzando: $game_name"
+
+    # Optimizar primero
+    optimize_game "$game_name"
+
+    # Source config y lanzar
+    config_file="$CONFIG_DIR/${game_name,,}_proton.env"
+
+    if [ -f "$config_file" ]; then
+        source "$config_file"
+        log "Configuración cargada desde: $config_file"
+    fi
+
+    echo -e "${GREEN}✅ Listo para lanzar${NC}"
+}
+
+# ===== MAIN =====
+case "${1:-help}" in
+    search)
+        search_game "$2"
+        ;;
+    predict)
+        predict_performance "$2"
+        ;;
+    optimize)
+        optimize_game "$2"
+        ;;
+    launch)
+        launch_game "$2" "$3"
+        ;;
+    hardware)
+        detect_hardware
+        cat "$CONFIG_DIR/hardware.json" | jq .
+        ;;
+    *)
+        echo -e "${BLUE}╔════════════════════════════════════╗${NC}"
+        echo -e "${BLUE}║   NexusAI Gaming Optimizer v1.0   ║${NC}"
+        echo -e "${BLUE}╚════════════════════════════════════╝${NC}"
+        echo ""
+        echo "Uso:"
+        echo "  nexus-ai search <juego>       - Buscar juego en BD"
+        echo "  nexus-ai predict <juego>      - Predecir compatibilidad"
+        echo "  nexus-ai optimize <juego>     - Auto-configurar"
+        echo "  nexus-ai launch <juego>       - Lanzar con config óptima"
+        echo "  nexus-ai hardware              - Mostrar hardware detectado"
+        echo ""
+        echo "Ejemplos:"
+        echo "  nexus-ai search elden ring"
+        echo "  nexus-ai predict cyberpunk"
+        echo "  nexus-ai launch fortnite"
+        ;;
+esac

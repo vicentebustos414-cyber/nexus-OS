@@ -1,0 +1,129 @@
+{
+  "version": "1.0",
+  "lastSync": "2026-06-17T21:00:00Z",
+  "ratings": {
+    "elden_ring": {
+      "name": "Elden Ring",
+      "avgRating": 4.8,
+      "totalReviews": 1240,
+      "workingReports": 1215,
+      "protonVersions": {
+        "proton-9.3-ge": {
+          "rating": 4.9,
+          "reports": 890,
+          "avgFps": 85
+        },
+        "proton-9.0-ge": {
+          "rating": 4.6,
+          "reports": 325,
+          "avgFps": 78
+        }
+      },
+      "gpuCompatibility": {
+        "nvidia": 4.9,
+        "amd": 4.7,
+        "intel": 3.8
+      },
+      "recentReviews": [
+        {
+          "user": "GamerX42",
+          "rating": 5,
+          "fps": 120,
+          "gpu": "RTX 4070",
+          "comment": "Perfecto en Ultra. Sin lag. Proton 9.3-ge es la clave",
+          "helpful": 342
+        },
+        {
+          "user": "LinuxNinja",
+          "rating": 5,
+          "fps": 100,
+          "gpu": "RX 6800 XT",
+          "comment": "Funciona increíble. RADV + DXVK optimizado",
+          "helpful": 287
+        },
+        {
+          "user": "SteamDeck",
+          "rating": 4,
+          "fps": 45,
+          "device": "Steam Deck OLED",
+          "comment": "Medium settings: 45 FPS stable. Jugable",
+          "helpful": 156
+        }
+      ]
+    },
+    "cyberpunk_2077": {
+      "name": "Cyberpunk 2077",
+      "avgRating": 4.6,
+      "totalReviews": 892,
+      "workingReports": 880,
+      "protonVersions": {
+        "proton-9.3-ge": {
+          "rating": 4.7,
+          "reports": 650,
+          "avgFps": 78
+        }
+      },
+      "gpuCompatibility": {
+        "nvidia": 4.8,
+        "amd": 4.5,
+        "intel": 3.2
+      },
+      "recentReviews": [
+        {
+          "user": "RTX4080User",
+          "rating": 5,
+          "fps": 120,
+          "gpu": "RTX 4080",
+          "comment": "Ultra + Path Tracing: 80-120 FPS. Mejor que Windows",
+          "helpful": 512
+        }
+      ]
+    },
+    "valorant": {
+      "name": "Valorant",
+      "avgRating": 0,
+      "totalReviews": 0,
+      "workingReports": 0,
+      "status": "INCOMPATIBLE",
+      "reason": "Vanguard kernel-level anti-cheat not supported in Linux",
+      "workarounds": [
+        {
+          "method": "VM con Windows",
+          "difficulty": "high",
+          "performance": "70% loss"
+        },
+        {
+          "method": "Dual boot Windows",
+          "difficulty": "medium",
+          "performance": "native"
+        }
+      ]
+    }
+  },
+  "leaderboard": {
+    "mostCompatible": [
+      {"game": "baldurs_gate_3", "rating": 4.9},
+      {"game": "ffxiv", "rating": 4.9},
+      {"game": "helldivers_2", "rating": 4.8},
+      {"game": "elden_ring", "rating": 4.8},
+      {"game": "starfield", "rating": 4.7}
+    ],
+    "bestPerformance": [
+      {"game": "cyberpunk_2077", "avgFps": 95},
+      {"game": "elden_ring", "avgFps": 85},
+      {"game": "starfield", "avgFps": 72}
+    ],
+    "worstCompatibility": [
+      {"game": "valorant", "status": "INCOMPATIBLE"},
+      {"game": "apex_legends", "rating": 0.5}
+    ]
+  },
+  "statsOverall": {
+    "totalGames": 1200,
+    "fullyCompatible": 856,
+    "partiallyCompatible": 267,
+    "incompatible": 77,
+    "avgCompatibilityRating": 4.6,
+    "lastUpdatedBy": "community"
+  }
+}

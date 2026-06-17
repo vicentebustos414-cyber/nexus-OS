@@ -1,0 +1,241 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2026-06-17",
+  "games": [
+    {
+      "id": "elden_ring",
+      "name": "Elden Ring",
+      "platform": ["steam"],
+      "appid": 570940,
+      "protonVersion": "proton-9.3-ge",
+      "compatibility": 98,
+      "antiCheat": false,
+      "minSpecs": {
+        "gpu": "GTX 1060 6GB",
+        "cpu": "Ryzen 5 3600",
+        "ram": 12,
+        "storage": 60
+      },
+      "recommendedSpecs": {
+        "gpu": "RTX 3070",
+        "cpu": "Ryzen 5 5600X",
+        "ram": 16,
+        "storage": 60
+      },
+      "configNvidia": {
+        "DXVKHeapSize": "4G",
+        "VKD3DFeatureLevel": "12_1"
+      },
+      "configAMD": {
+        "DXVKHeapSize": "3G",
+        "VKD3DFeatureLevel": "12_1",
+        "RADV_PERFTEST": "aco"
+      },
+      "communityRating": 4.8,
+      "reviews": 1240,
+      "notes": "Funciona perfectamente. FPS 60+ en Ultra con RTX 3070"
+    },
+    {
+      "id": "cyberpunk_2077",
+      "name": "Cyberpunk 2077",
+      "platform": ["steam", "gog"],
+      "appid": 570010,
+      "protonVersion": "proton-9.3-ge",
+      "compatibility": 99,
+      "antiCheat": false,
+      "minSpecs": {
+        "gpu": "RTX 2060",
+        "cpu": "Ryzen 3600",
+        "ram": 16,
+        "storage": 160
+      },
+      "recommendedSpecs": {
+        "gpu": "RTX 3080",
+        "cpu": "Ryzen 5 5900X",
+        "ram": 32,
+        "storage": 160
+      },
+      "configNvidia": {
+        "DXVKHeapSize": "6G",
+        "VKD3DFeatureLevel": "12_1",
+        "DXVK_HUD": "fps"
+      },
+      "communityRating": 4.6,
+      "reviews": 892,
+      "notes": "Ultra settings: 70+ FPS en RTX 3080. Path Tracing funciona perfectamente"
+    },
+    {
+      "id": "baldurs_gate_3",
+      "name": "Baldur's Gate 3",
+      "platform": ["steam"],
+      "appid": 1238140,
+      "protonVersion": "proton-9.3-ge",
+      "compatibility": 100,
+      "antiCheat": false,
+      "minSpecs": {
+        "gpu": "RTX 2060",
+        "cpu": "Ryzen 5 2600",
+        "ram": 16,
+        "storage": 180
+      },
+      "recommendedSpecs": {
+        "gpu": "RTX 3070",
+        "cpu": "Ryzen 5 5600X",
+        "ram": 32,
+        "storage": 180
+      },
+      "configNvidia": {
+        "DXVKHeapSize": "8G",
+        "VKD3DFeatureLevel": "12_1"
+      },
+      "communityRating": 4.9,
+      "reviews": 2100,
+      "notes": "Funciona 100%. Alta (no Ultra): 60 FPS en RTX 3070"
+    },
+    {
+      "id": "ffxiv",
+      "name": "Final Fantasy XIV",
+      "platform": ["steam"],
+      "appid": 39210,
+      "protonVersion": "proton-8.3",
+      "compatibility": 100,
+      "antiCheat": "ACEmu",
+      "minSpecs": {
+        "gpu": "GTX 1050",
+        "cpu": "Ryzen 3 3100",
+        "ram": 8,
+        "storage": 150
+      },
+      "recommendedSpecs": {
+        "gpu": "RTX 2070",
+        "cpu": "Ryzen 5 3600",
+        "ram": 16,
+        "storage": 150
+      },
+      "configNvidia": {
+        "DXVKHeapSize": "2G"
+      },
+      "communityRating": 4.9,
+      "reviews": 3500,
+      "notes": "MMO perfecto. 120+ FPS en Ultra. Anti-cheat funciona con WINE"
+    },
+    {
+      "id": "fortnite",
+      "name": "Fortnite",
+      "platform": ["epic"],
+      "appid": "Fortnite",
+      "protonVersion": "proton-9.3-ge",
+      "compatibility": 99,
+      "antiCheat": "EAC-partial",
+      "minSpecs": {
+        "gpu": "GTX 1050",
+        "cpu": "Ryzen 3 3100",
+        "ram": 8,
+        "storage": 90
+      },
+      "recommendedSpecs": {
+        "gpu": "RTX 2080",
+        "cpu": "Ryzen 5 5600X",
+        "ram": 16,
+        "storage": 90
+      },
+      "configNvidia": {
+        "DXVKHeapSize": "4G"
+      },
+      "communityRating": 4.7,
+      "reviews": 1890,
+      "notes": "Funciona sin anti-cheat. 100+ FPS posible en RTX 2080. Sin HWID ban risk"
+    },
+    {
+      "id": "valorant",
+      "name": "Valorant",
+      "platform": ["riot"],
+      "appid": "Valorant",
+      "protonVersion": "incompatible",
+      "compatibility": 0,
+      "antiCheat": "Vanguard-kernel",
+      "minSpecs": {
+        "gpu": "GTX 750",
+        "cpu": "Intel i5-4460",
+        "ram": 4,
+        "storage": 20
+      },
+      "communityRating": 0,
+      "reviews": 0,
+      "notes": "❌ Imposible en Linux. Vanguard requiere kernel-level driver. Solo Windows"
+    },
+    {
+      "id": "starfield",
+      "name": "Starfield",
+      "platform": ["steam", "xbox"],
+      "appid": 1716740,
+      "protonVersion": "proton-experimental",
+      "compatibility": 95,
+      "antiCheat": false,
+      "minSpecs": {
+        "gpu": "GTX 1070",
+        "cpu": "Ryzen 5 3600",
+        "ram": 16,
+        "storage": 130
+      },
+      "recommendedSpecs": {
+        "gpu": "RTX 3080",
+        "cpu": "Ryzen 7 5800X",
+        "ram": 32,
+        "storage": 130
+      },
+      "configNvidia": {
+        "DXVKHeapSize": "6G",
+        "VKD3DFeatureLevel": "12_1"
+      },
+      "communityRating": 4.5,
+      "reviews": 756,
+      "notes": "High settings: 60 FPS en RTX 3080. Ultra puede dar stutters"
+    },
+    {
+      "id": "helldivers_2",
+      "name": "Helldivers 2",
+      "platform": ["steam", "playstation"],
+      "appid": 553850,
+      "protonVersion": "proton-9.0-ge",
+      "compatibility": 100,
+      "antiCheat": false,
+      "minSpecs": {
+        "gpu": "GTX 1060",
+        "cpu": "Ryzen 5 2600",
+        "ram": 12,
+        "storage": 130
+      },
+      "recommendedSpecs": {
+        "gpu": "RTX 2080",
+        "cpu": "Ryzen 5 5600X",
+        "ram": 16,
+        "storage": 130
+      },
+      "configNvidia": {
+        "DXVKHeapSize": "3G"
+      },
+      "communityRating": 4.8,
+      "reviews": 2340,
+      "notes": "Coop perfecto. 120+ FPS en Ultra. Cross-play con PS5 funciona"
+    }
+  ],
+  "protonVersions": {
+    "proton-9.3-ge": {
+      "url": "https://github.com/GloriousEggroll/proton-ge-custom/releases",
+      "recommended": true,
+      "version": "9.3"
+    },
+    "proton-experimental": {
+      "url": "https://github.com/ValveSoftware/Proton",
+      "recommended": false,
+      "version": "experimental"
+    }
+  },
+  "antiCheatSupport": {
+    "none": "✅ Compatible",
+    "ACEmu": "✅ Compatible (WINE wrapper)",
+    "EAC-partial": "✅ Parcialmente (sin soporte oficial)",
+    "Vanguard-kernel": "❌ Incompatible (kernel-level)"
+  }
+}

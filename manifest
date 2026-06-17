@@ -32,6 +32,7 @@ export PACKAGES="\
 	code \
 	cpupower \
 	diffutils \
+	jq \
 	dkms \
 	distrobox \
 	dmidecode \
@@ -448,6 +449,40 @@ TIMESHIFT_CRON_EOF
 	# Replace wpctl with a wrapper to work around Steam resetting audio
 	mv /usr/bin/wpctl /usr/libexec/wpctl
 	mv /usr/bin/wpctl-wrapper /usr/bin/wpctl
+
+	# ========== NexusOS Gaming Ecosystem Installation ==========
+	# Instalar NexusGaming framework
+	mkdir -p /opt/nexus-gaming/{bin,db,configs,launcher,ai,community}
+
+	# Copiar scripts del repositorio
+	cp -r nexus-gaming/* /opt/nexus-gaming/ 2>/dev/null || true
+
+	# Hacer scripts ejecutables
+	chmod +x /opt/nexus-gaming/ai/nexus-ai.sh
+	chmod +x /opt/nexus-gaming/launcher/nexus-launcher.sh
+
+	# Crear symlinks en /usr/local/bin
+	ln -sf /opt/nexus-gaming/ai/nexus-ai.sh /usr/local/bin/nexus-ai
+	ln -sf /opt/nexus-gaming/launcher/nexus-launcher.sh /usr/local/bin/nexus-launcher
+
+	# Crear aplicación de escritorio para launcher
+	cat > /usr/share/applications/nexus-launcher.desktop << 'DESKTOP_EOF'
+[Desktop Entry]
+Type=Application
+Name=NexusOS Gaming Launcher
+Comment=AI-powered gaming optimizer and launcher
+Exec=bash -c "DISPLAY=:0 /opt/nexus-gaming/launcher/nexus-launcher.sh"
+Icon=steam
+Categories=Games;Utility;
+Terminal=true
+EOF
+
+	chmod +x /usr/share/applications/nexus-launcher.desktop
+
+	log "✅ NexusOS Gaming Ecosystem instalado"
+	log "   Comandos disponibles:"
+	log "   - nexus-ai search|predict|optimize|launch|hardware"
+	log "   - nexus-launcher (menú interactivo)"
 
 	# ========== NexusOS Optimization Tweaks ==========
 	# TLP - Power management
