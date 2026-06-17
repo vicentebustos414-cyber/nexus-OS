@@ -1,0 +1,22 @@
+﻿## 🐧 NexusOS v1.0 ADVANCED - Gaming Powerhouse
+
+**Advanced Technical Edition with 6 Optimization Tools**
+
+This release includes the complete NexusOS Gaming Ecosystem PLUS advanced tools:
+
+### NEW: Advanced Technical Tools
+
+✅ **Proton Manager** - Multi-version Proton-GE & Experimental support
+✅ **Auto-Repair System** - NexusCrashGuard for automatic game recovery
+✅ **Bottleneck Detector** - Hardware analysis and performance prediction
+✅ **DXVK/VKD3D Optimizer** - Per-GPU DirectX emulation optimization
+✅ **Wine Staging** - esync/fsync integrated gaming wine
+✅ **Lutris Manager** - 1000+ preconfigurated game scripts
+
+Download via ORAS:
+\\\ash
+oras pull ghcr.io/vicentebustos414-cyber/nexus-os:unstable
+\\\
+
+Size: ~2.8 GB
+Status: Production Ready

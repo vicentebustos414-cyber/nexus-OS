@@ -555,4 +555,12 @@ UDEV_EOF
 	systemctl enable gamemode 2>/dev/null || true
 
 	echo "[$(date)] NexusOS optimization tweaks applied" >> /var/log/nexusos-install.log
+
+	# ========== ULTRA COMPRESSION (NexusWin ONLY) ==========
+	# Este paso es para Windows durante la customización
+	# Para Linux, la compresión se maneja a nivel de ISO/FS
+	log "🗜️ Ultra Compression: Si ejecutas esto en Windows, descarga:"
+	log "   C:\NexusWin\setup\12-ultra-compression.ps1"
+	log "   y ejecuta como Administrator para máxima compresión (6-10GB final)"
+	echo "[$(date)] Ultra compression script ready for Windows installation" >> /var/log/nexusos-install.log
 }
